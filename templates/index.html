@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<HTML>
+
+<HEAD>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</HEAD>
+<TITLE>
+    Movie Explorer
+</TITLE>
+
+<BODY>
+    <h1 class="pagetitle">Title:</h1>
+    <p class="movietitle">{{MovieName}}</p>
+    <p class="tagline">"{{Tagline}}"</p>
+    <!-- <p class="genres">Genres: {%for i in range(0,len)%}
+            {{" "+Genres[i]+","}}
+            {%endfor%}
+        </p> -->
+    <p class="genres">Genres: {{genrestring}}</p>
+    <img class="imgborder" src={{imageurl}}>
+    <p>{{pageid}}</p>
+
+    <div class="wikilink">
+        <a href="{{wikiurl}}">Go to this movie's wikipedia page</a>
+    </div>
+    <br>
+    <div class="poststuff">
+        <form method="POST" action="/posttoserver">
+            <p>User:</p>
+            <input readonly style="height:20px; width:100px; font-size:14pt;" type="text" name="user"
+                value="{{currentuser}}" />
+            <br>
+            <p>Movie ID:</p>
+            <input readonly style="height:20px; width:70px; font-size:14pt;" type="number" name="movieid"
+                value="{{movieid}}" />
+            <br>
+            <p>Leave a rating for this movie out of 5</p>
+            <input style="height:20px; width:50px; font-size:14pt;" type="number" name="rating" />
+            <p>Comment below:
+            </p>
+            <p>Limited to 500 Characters</p>
+            <input class="commentbox" style="height:150px; width:400px; font-size:14pt;" type="text" name="comment" />
+            <br>
+            <input type="submit" value="Post!" />
+
+        </form>
+    </div>
+    <br>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <p class="message">{{message}}</p>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <br>
+    <p class="user">Hi {{currentuser}} !</p>
+    <div class="button">
+        <form method="POST" action="/logoff">
+            <input type="submit" value="Log Out!" />
+    </div>
+    <div class="usrreviews">
+        <p class="commentsheader">
+            See other user reviews for this movie:
+        </p>
+        <br>
+        {% for i in range(length)%}
+        User: <b>{{comments[i].user}}</b>
+        <br>
+        Rating: {{comments[i].rating}}
+        <br>
+        Comment: {{comments[i].comment}}
+        <br>
+        {% endfor %}
+        <br>
+    </div>
+
+</BODY>
+
+</HTML>
