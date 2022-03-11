@@ -132,10 +132,38 @@ def posttoserver():
     return flask.redirect(flask.url_for("main"))
 
 
+bp = flask.Blueprint("bp", __name__, template_folder="./static/react",)
+
+
+# route for serving React page
+@bp.route("/")
+def index():
+    # NB: DO NOT add an "index.html" file in your normal templates folder
+    # Flask will stop serving this React page correctly
+    return flask.render_template("index.html")
+
+
+app.register_blueprint(bp)
+
+
+@app.route("/returncomments", methods=["POST", "GET"])
+def returncomments():
+    index = random.randint(0, 14)
+    info = moviegetter.moviegetter(index)
+    comments = UserReview.query.filter_by(movieid=info[4]).all()
+    rating = comments["rating"]
+    comment = comments["comment"]
+    movieid = comments["movieid"]
+    user = comments["user"]
+
+    return flask.jsonify(
+        {"Rating": rating, "Comment": comment, "Movieid": movieid, "User": user}
+    )
+
+
 # Main page of the app
 # Logining in is required to access this page
 @app.route("/main")
-@login_required
 def main():
     index = random.randint(0, 14)
     info = moviegetter.moviegetter(index)
@@ -168,7 +196,6 @@ def main():
 
     comments = UserReview.query.filter_by(movieid=movieid).all()
     length = len(comments)
-
     return flask.render_template(
         "index.html",
         MovieName=MovieName,
